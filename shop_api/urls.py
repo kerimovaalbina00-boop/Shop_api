@@ -16,7 +16,6 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
 from product.views import *
 
 urlpatterns = [
@@ -30,4 +29,5 @@ urlpatterns = [
 
     path('api/v1/reviews/', review_list_api_view),
     path('api/v1/reviews/<int:id>/', review_detail_api_view),
+    path('api/v1/products/reviews/', product_reviews_api_view),
 ]

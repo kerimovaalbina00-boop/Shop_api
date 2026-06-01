@@ -4,7 +4,9 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-
+from django.db.models import Avg
+from .serializers import ProductReviewSerializer
+from django.db.models import Count
 from .models import Category, Product, Review
 from .serializers import (
     CategorySerializer,
@@ -15,7 +17,7 @@ from .serializers import (
 
 @api_view(['GET'])
 def category_list_api_view(request):
-    categories = Category.objects.all()
+    categories = Category.objects.annotate(products_count=Count('products'))
     data = CategorySerializer(categories, many=True).data
     return Response(data=data)
 
@@ -64,4 +66,12 @@ def review_detail_api_view(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     data = ReviewSerializer(review, many=False).data
+    return Response(data=data)
+
+
+@api_view(['GET'])
+def product_reviews_api_view(request):
+    products = Product.objects.prefetch_related('reviews')
+    data = ProductReviewSerializer(products,many=True).data
+
     return Response(data=data)
